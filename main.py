@@ -1,11 +1,12 @@
+import os
+import uvicorn
 from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
 
-# Load student data from CSV
+# Load CSV file
 df = pd.read_csv("students.csv")
 
-# Initialize FastAPI app
 app = FastAPI()
 
 # Enable CORS to allow requests from any origin
@@ -27,3 +28,7 @@ def get_students(class_: list[str] = Query(None, alias="class")):
 
     return {"students": filtered_df.to_dict(orient="records")}
 
+# Automatically get PORT from Railway
+if __name__ == "__main__":
+    port = int(os.getenv("PORT", 8000))  # Use Railway-assigned port, default to 8000
+    uvicorn.run(app, host="0.0.0.0", port=port)
